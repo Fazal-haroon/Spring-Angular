@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -50,8 +51,28 @@ public class RestTemplateController {
 
         Map<String, Object> productResponse = restTemplate.postForObject(builder.toUriString(), HttpEntity.EMPTY, Map.class);
         /*
-        * restTemplate.exchange(builder.toUriString(), HttpMethod.POST, HttpEntity.EMPTY, Map.class);
-        * */
+         * restTemplate.exchange(builder.toUriString(), HttpMethod.POST, HttpEntity.EMPTY, Map.class);
+         * */
         return productResponse;
+    }
+
+    @PutMapping(value = "")
+    public ResponseEntity<Product> updateProduct(@RequestBody Product product) {
+        String resourceUrl = "http://localhost:8082/product/";
+
+        HttpEntity<Product> request = new HttpEntity<>(product);
+
+        ResponseEntity<Product> response = restTemplate.exchange(resourceUrl, HttpMethod.PUT, request, Product.class);
+
+        return response;
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map> deleteProduct(@PathVariable("id") Long id) {
+        String resourceUrl = "http://localhost:8082/product/" + id;
+
+        ResponseEntity<Map> response = restTemplate.exchange(resourceUrl, HttpMethod.DELETE, HttpEntity.EMPTY, Map.class);
+
+        return response;
     }
 }
